@@ -1,0 +1,12 @@
+setup.py
+UNKNOWN.egg-info/PKG-INFO
+UNKNOWN.egg-info/SOURCES.txt
+UNKNOWN.egg-info/dependency_links.txt
+UNKNOWN.egg-info/top_level.txt
+im2mesh/utils/libmcubes/marchingcubes.cpp
+im2mesh/utils/libmcubes/mcubes.cpp
+im2mesh/utils/libmcubes/pywrapper.cpp
+im2mesh/utils/libmesh/triangle_hash.cpp
+im2mesh/utils/libmise/mise.cpp
+im2mesh/utils/libsimplify/simplify_mesh.cpp
+im2mesh/utils/libvoxelize/voxelize.c

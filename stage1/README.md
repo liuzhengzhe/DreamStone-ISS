@@ -1,0 +1,1 @@
+https://s3.eu-central-1.amazonaws.com/avg-projects/differentiable_volumetric_rendering/models/single_view_reconstruction/multi-view-supervision/ours_combined-af2bce07.pt

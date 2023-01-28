@@ -1,0 +1,11 @@
+# ninja log v5
+1	156	1674911274613083733	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/marchingcubes.o	493872bb4bb7bc14
+1	784	1674911275241081488	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/pywrapper.o	5b9672dae6db397b
+0	1001	1674911275461080706	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/mcubes.o	296ea4462a751e38
+1	155	1674911387776865815	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/marchingcubes.o	493872bb4bb7bc14
+1	756	1674911388376865588	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/pywrapper.o	5b9672dae6db397b
+1	973	1674911388592865508	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/mcubes.o	296ea4462a751e38
+0	2558	1674911391316864606	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmesh/triangle_hash.o	426f8e4152c864c5
+0	3092	1674911394572863770	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libmise/mise.o	c013f327bbb20a9f
+0	3478	1674911398224863147	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libsimplify/simplify_mesh.o	168684affc6416f7
+0	2251	1674911411440863635	/mnt/sdc/lzz/stage3_texture/build/temp.linux-x86_64-3.10/im2mesh/utils/libvoxelize/voxelize.o	e59a94202003e8bf

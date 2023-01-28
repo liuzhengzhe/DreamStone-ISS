@@ -1,0 +1,8 @@
+# ninja log v5
+0	159	1674901050751950556	/mnt/sdc/lzz/stage3/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/marchingcubes.o	acb577da47657129
+1	736	1674901051331953460	/mnt/sdc/lzz/stage3/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/pywrapper.o	c9bb12ffe21c0d09
+1	1007	1674901051599954800	/mnt/sdc/lzz/stage3/build/temp.linux-x86_64-3.10/im2mesh/utils/libmcubes/mcubes.o	53c9ec584873a9d8
+0	2474	1674901054243967976	/mnt/sdc/lzz/stage3/build/temp.linux-x86_64-3.10/im2mesh/utils/libmesh/triangle_hash.o	ea58ccdadece115c
+0	2999	1674901057407983625	/mnt/sdc/lzz/stage3/build/temp.linux-x86_64-3.10/im2mesh/utils/libmise/mise.o	50a0e0d030b86be3
+0	3392	1674901060972001107	/mnt/sdc/lzz/stage3/build/temp.linux-x86_64-3.10/im2mesh/utils/libsimplify/simplify_mesh.o	f2cdcb34874d7ffa
+0	2127	1674901073628061911	/mnt/sdc/lzz/stage3/build/temp.linux-x86_64-3.10/im2mesh/utils/libvoxelize/voxelize.o	20482834d12e650
