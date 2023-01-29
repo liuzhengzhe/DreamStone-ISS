@@ -146,70 +146,15 @@ class Generator3D(object):
         #inputs=(inputs-0.45)/0.27
         import clip
         
-        #print (self.model)
-        #exit()
-        #model.train()  
-        #c, c_std =self.model.encode_inputs(inputs)
-        #text=text.split('/')[-1]
-        #print (text)
-        #np.save('fg/'+text+'.npy', c_std.detach().cpu().numpy())
-        #return text
 
-        #np.save('dvr.npy', c_std.detach().cpu().numpy())
-        #print (text+'/c.npy','text feature load path')
         print ('text', text,'text')
         c=torch.from_numpy(np.load(text+'/c.npy')).cuda()
-        
-        '''print (c,'c1')
-        text=text.split('/')[-1]
-        print ('text', text)
-        text=clip.tokenize(text).to(device) #"ferry boat watercraft ship").to(device)
-        c = self.model.clip_model.encode_text(text).float()'''
 
-        '''from PIL import Image
-
-        model, preprocess = clip.load("ViT-B/32", device=device)
-        image_path='/mnt/sdc/lzz/ShapeNet/03636649/13f46d5ae3e33651efd0188089894554/img_choy2016/000.jpg'
-        image = preprocess(Image.open(image_path)).unsqueeze(0).to(device)    
-        c = model.encode_image(image)'''
-
-
-        #c  =  c/ c.norm(dim=-1, keepdim=True) # normalize to sphere
-        #print (c,'c2')'''
-        #print (c)
         c=self.model.generator(c.float())
-        #np.save('feature/'+text.split('/')[-1], c.detach().cpu().numpy())
-        #print (c.shape, c_std.shape)
-        #c=torch.from_numpy(np.load('fg/a TV monitor.npy')).cuda()
-        
-        #np.save('final.npy', c.detach().cpu().numpy())
-        #c_std=torch.from_numpy(np.load('fg2/a long luxury black car.npy')).cuda()
-        #print ('yesssss')
+
         import glob
 
-        '''paths=glob.glob('nearest2/*')
-        for path in paths:
-            text0=path.split('/')[-1].split('.')[0]
 
-            text=clip.tokenize(text0).to(device) #"ferry boat watercraft ship").to(device)
-            c = self.model.clip_model.encode_text(text).float()
-            c  =  c/ c.norm(dim=-1, keepdim=True) 
-            c=self.model.generator(c.float())
-            np.save('ft1/'+text0+'.npy', c.detach().cpu().numpy())
-        exit()'''
-        '''paths=glob.glob('nearest4/*/000.jpg')
-        for path in paths:
-            image = Image.open(path).convert("RGB")
-            text=path.split('/')[-2]
-            image=transform(image).cuda().unsqueeze(0)
-
-            c, c_std =self.model.encode_inputs(image)
-            c=self.model.generator(c.float())
-            ##print (c.shape, c_std.shape)
-            np.save('fg4/'+text+'.npy', c_std.detach().cpu().numpy())
-            np.save('fi4/'+text+'.npy', c.detach().cpu().numpy())
-
-        exit()'''
         mesh,pc1,pc2 = self.generate_from_latent(c, stats_dict=stats_dict,
                                          data=data, **kwargs)
 

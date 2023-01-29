@@ -8,10 +8,75 @@ from im2mesh.utils import libmcubes
 from im2mesh.common import make_3d_grid
 from im2mesh.utils.libsimplify import simplify_mesh
 from im2mesh.utils.libmise import MISE
-import time
+import time,math
 from im2mesh.common import transform_pointcloud
 
 
+def sample_points_triangle(vertices, triangles, num_of_points):
+	epsilon = 1e-6
+	triangle_area_list = np.zeros([len(triangles)],np.float32)
+	triangle_normal_list = np.zeros([len(triangles),3],np.float32)
+	for i in range(len(triangles)):
+		#area = |u x v|/2 = |u||v|sin(uv)/2
+		a,b,c = vertices[triangles[i,1]]-vertices[triangles[i,0]]
+		x,y,z = vertices[triangles[i,2]]-vertices[triangles[i,0]]
+		ti = b*z-c*y
+		tj = c*x-a*z
+		tk = a*y-b*x
+		area2 = math.sqrt(ti*ti+tj*tj+tk*tk)
+		if area2<epsilon:
+			triangle_area_list[i] = 0
+			triangle_normal_list[i,0] = 0
+			triangle_normal_list[i,1] = 0
+			triangle_normal_list[i,2] = 0
+		else:
+			triangle_area_list[i] = area2
+			triangle_normal_list[i,0] = ti/area2
+			triangle_normal_list[i,1] = tj/area2
+			triangle_normal_list[i,2] = tk/area2
+	
+	triangle_area_sum = np.sum(triangle_area_list)
+	sample_prob_list = (num_of_points/triangle_area_sum)*triangle_area_list
+
+	triangle_index_list = np.arange(len(triangles))
+
+	point_normal_list = np.zeros([num_of_points,6],np.float32)
+	count = 0
+	watchdog = 0
+
+	while(count<num_of_points):
+		np.random.shuffle(triangle_index_list)
+		watchdog += 1
+		if watchdog>100:
+			print("infinite loop here!")
+			return point_normal_list
+		for i in range(len(triangle_index_list)):
+			if count>=num_of_points: break
+			dxb = triangle_index_list[i]
+			prob = sample_prob_list[dxb]
+			prob_i = int(prob)
+			prob_f = prob-prob_i
+			if np.random.random()<prob_f:
+				prob_i += 1
+			normal_direction = triangle_normal_list[dxb]
+			u = vertices[triangles[dxb,1]]-vertices[triangles[dxb,0]]
+			v = vertices[triangles[dxb,2]]-vertices[triangles[dxb,0]]
+			base = vertices[triangles[dxb,0]]
+			for j in range(prob_i):
+				#sample a point here:
+				u_x = np.random.random()
+				v_y = np.random.random()
+				if u_x+v_y>=1:
+					u_x = 1-u_x
+					v_y = 1-v_y
+				ppp = u*u_x+v*v_y+base
+				
+				point_normal_list[count,:3] = ppp
+				point_normal_list[count,3:] = normal_direction
+				count += 1
+				if count>=num_of_points: break
+
+	return point_normal_list
 class Generator3D(object):
     '''  Generator class for DVRs.
 
@@ -52,13 +117,7 @@ class Generator3D(object):
         self.with_color = with_color
         self.refine_max_faces = refine_max_faces
 
-    def generate_mesh(self, data, return_stats=True):
-        ''' Generates the output mesh.
-
-        Args:
-            data (tensor): data tensor
-            return_stats (bool): whether stats should be returned
-        '''
+    def generate_mesh(self, data,root, return_stats=True):
         self.model.eval()
         device = self.device
         stats_dict = {}
@@ -66,28 +125,20 @@ class Generator3D(object):
         inputs = data.get('inputs', torch.empty(1, 0)).to(device)
         kwargs = {}
         
-        #inputs=(inputs-0.45)/0.27
         import clip
-        #text = clip.tokenize("").to(device) #"ferry boat watercraft ship").to(device)
-        #c = self.model.clip_model.encode_text(text).float()
 
-        #c =self.model.encode_inputs(inputs)
-        
-        
-        #c=torch.from_numpy(np.load('c.npy')).cuda()
-        #text = clip.tokenize("a yellow car").to(device) #"ferry boat watercraft ship").to(device)
-        #c = self.model.clip_model.encode_text(text).float()
-        #c  =  c/ c.norm(dim=-1, keepdim=True) # normalize to sphere
-        c=torch.from_numpy(np.load('c.npy')).cuda()
-        c=self.model.generator(c)
-        
-        mesh, soma_array, grid = self.generate_from_latent(c, stats_dict=stats_dict,
+        c=torch.from_numpy(np.load(root+'/c.npy')).cuda()
+
+        c=self.model.generator(c.float())
+
+        import glob
+
+
+        mesh,pc1,pc2 = self.generate_from_latent(c, stats_dict=stats_dict,
                                          data=data, **kwargs)
-        
-        grid[np.where(grid>0)]=True
-        grid[np.where(grid<=0)]=False
+                                         
 
-        return mesh, stats_dict, soma_array, grid
+        return mesh, stats_dict, c,pc1,pc2
 
     def generate_meshes(self, data, return_stats=True):
         ''' Generates the output meshes with data of batch size >=1
@@ -135,12 +186,6 @@ class Generator3D(object):
 
     def generate_from_latent(self, c=None, stats_dict={}, data=None,
                              **kwargs):
-        ''' Generates mesh from latent.
-
-        Args:
-            c (tensor): latent conditioned code c
-            stats_dict (dict): stats dictionary
-        '''
         threshold = np.log(self.threshold) - np.log(1. - self.threshold)
 
         t0 = time.time()
@@ -180,27 +225,8 @@ class Generator3D(object):
         # Extract mesh
         stats_dict['time (eval points)'] = time.time() - t0
 
-        mesh = self.extract_mesh(value_grid, c, stats_dict=stats_dict)
-        
-
-        some_array=[]
-        size=32
-        #print (self.data_voxels.shape, self.data_voxels_colors.shape)
-        for i in range(3,257,8):
-          for j in range(3,257,8):
-            for k in range(3,257,8):
-              if value_grid[i,j,k]>0:
-               some_array.append((int(i/8),int(j/8),int(k/8)))
-        some_array = np.array(some_array, dtype=[('x', 'float32'), ('y', 'float32'),    ('z', 'float32')])
-        
-        
-        #PlyData([el]).write('show199/'+name+str(data[2][:50].replace('/',' '))+'_gt.ply')
-        
-
-      
-      
-        #print ('value grid', value_grid.shape, np.unique(value_grid))
-        return mesh, some_array, value_grid[3:257:8,3:257:8,3:257:8]
+        mesh,pc1,pc2 = self.extract_mesh(value_grid, c, stats_dict=stats_dict)
+        return mesh,pc1,pc2
 
     def eval_points(self, p, c=None, **kwargs):
         ''' Evaluates the occupancy values for the points.
@@ -224,14 +250,6 @@ class Generator3D(object):
         return occ_hat
 
     def extract_mesh(self, occ_hat, c=None, stats_dict=dict()):
-        ''' Extracts the mesh from the predicted occupancy grid.
-
-        Args:
-            occ_hat (tensor): value grid of occupancies
-            c (tensor): latent conditioned code c
-            stats_dict (dict): stats dictionary
-        '''
-        # Some short hands
         n_x, n_y, n_z = occ_hat.shape
         box_size = 1 + self.padding
         threshold = np.log(self.threshold) - np.log(1. - self.threshold)
@@ -241,6 +259,9 @@ class Generator3D(object):
             occ_hat, 1, 'constant', constant_values=-1e6)
         vertices, triangles = libmcubes.marching_cubes(
             occ_hat_padded, threshold)
+
+
+
         stats_dict['time (marching cubes)'] = time.time() - t0
         # Strange behaviour in libmcubes: vertices are shifted by 0.5
         vertices -= 0.5
@@ -292,7 +313,18 @@ class Generator3D(object):
                 vertex_normals=mesh.vertex_normals,
                 vertex_colors=vertex_colors, process=False)
 
-        return mesh
+
+
+
+
+        
+        sampled_points_normals = sample_points_triangle(vertices, triangles, 2048)
+        vertices_tensor=torch.from_numpy(vertices.astype(np.float32)).cuda()
+        #sampled_points_normals_int=sampled_points_normals#.astype('int')    
+            
+        sampled_colors = self.estimate_colors(np.array(sampled_points_normals[:,:3]), c)
+
+        return mesh,sampled_points_normals, sampled_colors
 
     def estimate_colors(self, vertices, c=None):
         ''' Estimates vertex colors by evaluating the texture field.

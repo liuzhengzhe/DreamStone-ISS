@@ -67,7 +67,6 @@ def write_ply_point_normal(name, vertices,  colors):
 if __name__ == '__main__':
     #text='aaa'
 
-    it=30
     parser = argparse.ArgumentParser(
         description='Extract meshes from occupancy process.'
     )
@@ -79,8 +78,12 @@ if __name__ == '__main__':
                         help='Overrites the default upsampling steps in config')
     parser.add_argument('--refinement-step', type=int, default=-1,
                         help='Overrites the default refinement steps in config')
-    parser.add_argument('--text', type=str, default='a',
+    parser.add_argument('--text', type=str, default='a red car',
                         help='Text')
+    parser.add_argument('--it', type=str, default='10',
+                        help='Iteration')
+
+
 
     args = parser.parse_args()
     cfg = config.load_config(args.config, 'configs/default.yaml')
@@ -88,8 +91,8 @@ if __name__ == '__main__':
     device = torch.device("cuda" if is_cuda else "cpu")
 
     text = args.text
-
-    text = '/mnt/sda/lzz/cases-v4/'+args.text
+    it=int(args.it)
+    text = '../stage2/out/'+args.text
     # Overwrite upsamping and refinement step if desired
     if args.upsampling_steps != -1:
         cfg['generation']['upsampling_steps'] = args.upsampling_steps
@@ -112,8 +115,10 @@ if __name__ == '__main__':
     # we do not want to treat different images from same object as
     # different objects
     cfg['data']['split_model_for_images'] = False
-
     
+    print (text+'/model'+str(it)+'.pt')
+
+    assert os.path.exists(text+'/model'+str(it)+'.pt')
     cfg['test']['model_file']=text+'/model'+str(it)+'.pt'
     dataset = config.get_dataset(cfg, mode='test', return_idx=True)
 
@@ -134,7 +139,6 @@ if __name__ == '__main__':
     exit()'''
 
     checkpoint_io = CheckpointIO(text+'/model'+str(it)+'.pt', model=model)
-    #checkpoint_io = CheckpointIO('model.pt', model=model)
     checkpoint_io.load(cfg['test']['model_file'], device=device)
     
     # Generator
@@ -217,14 +221,11 @@ if __name__ == '__main__':
             size=100
             pixels = arange_pixels((size,size), batch_size)[1].to(device)
             
-            camera_mat=torch.from_numpy(np.load('/mnt/sdc/lzz/ShapeNet/camera_mat.npy')).cuda().float().unsqueeze(0)
+            camera_mat=torch.from_numpy(np.load('../../ShapeNet/camera_mat.npy')).cuda().float().unsqueeze(0)
             scale_mat=torch.from_numpy(np.eye(4)).cuda().float().unsqueeze(0)
             
             
-            try:
-              os.mkdir(modelname)
-            except:
-              pass
+
             patch=10
             psize=int(size/patch)
 
@@ -235,7 +236,7 @@ if __name__ == '__main__':
         
             for rrr in range(5):
               for i in range(patch):
-                world_mat=torch.from_numpy(np.load(glob.glob('/mnt/sdc/lzz/cameras/*.npy')[rrr])).cuda().float().unsqueeze(0)
+                world_mat=torch.from_numpy(np.load(glob.glob('../../cameras/*.npy')[rrr])).cuda().float().unsqueeze(0)
                 #world_mat[:,:3,3]*=1.5
                 p_world, mask_p, mask_zero_occupied = \
                     model.pixels_to_world(pixels[:,i*psize*size:(i+1)*psize*size,:], camera_mat,
@@ -266,6 +267,8 @@ if __name__ == '__main__':
 
             #np.save('ft1/'+text.split('/')[-1]+'.npy',c.detach().cpu().numpy())
             #continue
+            #print ('pc', pc1.shape, pc2.shape)
+            #exit()
             write_ply_point_normal(text+"/newpc.ply", pc1, pc2/255.0)
 
             # Write output

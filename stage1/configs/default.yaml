@@ -1,7 +1,7 @@
 method: dvr
 data:
   dataset_name: Shapes3D
-  path: ../ShapeNet
+  path: ../../ShapeNet
   classes: null
   input_type: image
   dim: 3

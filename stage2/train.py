@@ -46,7 +46,7 @@ if __name__ == '__main__':
     parser.add_argument('--exit-after', type=int, default=-1,
                         help='Checkpoint and exit after specified number of '
                             'seconds with exit code 2.')
-    parser.add_argument('--text', type=str, default='a',
+    parser.add_argument('--text', type=str, default='a red car',
                         help='Text')
     parser.add_argument('--iteration', type=str, default='20',
                         help='iteration')
@@ -140,6 +140,10 @@ if __name__ == '__main__':
 
     trainer = config.get_trainer(model, optimizer,cfg, device=device,
                                 generator=generator)
+    
+    
+    
+    assert os.path.exists('model.pt')
     checkpoint_io = CheckpointIO(out_dir, model=model, optimizer=optimizer)
     try:
         load_dict = checkpoint_io.load('model.pt', device=device)
@@ -172,8 +176,8 @@ if __name__ == '__main__':
     logger_py.info('Total number of parameters: %d' % nparameters)
     t0b = time.time()
 
-    checkpoint_io.save('out/'+text+'/model0.pt', epoch_it=epoch_it, it=it,
-                                loss_val_best=metric_val_best)
+    #checkpoint_io.save('out/'+text+'/model0.pt', epoch_it=epoch_it, it=it,
+    #                            loss_val_best=metric_val_best)
 
     
     

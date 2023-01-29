@@ -6,16 +6,16 @@ Code for the paper [Image as Stepping Stone for Text-Guided 3D Shape Generation]
 
 **Authors**: Zhengzhe Liu, Peng Dai, Ruihui Li, Xiaojuan Qi, Chi-Wing Fu
 
-<img src="figure1.PNG" width="900"/>
+<img src="figure1.jpg" width="900"/>
 
 
 ## Installation
 
-'''
+```
 conda env create -f environment.yaml
 conda activate iss
 python setup.py build_ext --inplace
-'''
+```
 
 ## Data Preparation
 
@@ -46,29 +46,60 @@ python train.py configs/single_view_reconstruction/multi_view_supervision/ours_c
 
 Put the pretrained model of stage 1 to "stage2" folder. 
 
+(1) Training
+
 ```
 cd ../stage2
 python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'a red car'
 ```
 
+(2) Inference
+
+```
+python generate.py configs/demo/demo_combined.yaml --text 'a red car' --it 20
+```
+
+"it" means the iteration of saved model. 
+
+Mesh and point cloud are saved in 'out/a red car/'
+
 ##  Stage3: texture stylization
 
-First generate "a chair" in "stage2". 
+(1) First generate "a chair" in "stage2". 
+
+(2) Training
 
 ```
 cd ../stage3_texture
 python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'wooden' --model '../stage2/out/a chair/model20.pt'
 ```
 
+The rendered images are saved in "tmp" folder. 
+
+(3) Inference
+
+```
+python generate.py configs/demo/demo_combined.yaml --model '../stage2/out/a chair/model20.pt'
+```
+
 ##  Stage3: shape-and-texture stylization
 
-First generate "a wooden boat" in "stage2". 
+(1) First generate "a wooden boat" in "stage2". 
+
+(2) Training
 
 ```
 cd ../stage3_shape_texture
 python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'tulip' --model '../stage2/out/a wooden boat/mode20.pt'
 ```
 
+The rendered images are saved in "tmp" folder. 
+
+(3) Inference
+
+```
+python generate.py configs/demo/demo_combined.yaml --model '../stage2/out/a wooden boat/model20.pt'
+```
 
 ##  Working with [GET3D](https://arxiv.org/abs/2209.11163)
 

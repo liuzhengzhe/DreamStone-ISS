@@ -13,10 +13,50 @@ from im2mesh.checkpoints import CheckpointIO
 from im2mesh.common import transform_mesh
 from PIL import Image
 from scipy.spatial.transform import Rotation as R
-import trimesh
+import trimesh,glob,cv2
 from plyfile import PlyData,PlyElement
+from im2mesh.common import (
+    check_weights, get_tensor_values, transform_to_world,
+    transform_to_camera_space, sample_patch_points, arange_pixels,
+    make_3d_grid, compute_iou, get_occupancy_loss_points,
+    get_freespace_loss_points
+)
 
+def write_ply_point(name, vertices):
+	fout = open(name, 'w')
+	fout.write("ply\n")
+	fout.write("format ascii 1.0\n")
+	fout.write("element vertex "+str(len(vertices))+"\n")
+	fout.write("property float x\n")
+	fout.write("property float y\n")
+	fout.write("property float z\n")
+	fout.write("end_header\n")
+	for ii in range(len(vertices)):
+		fout.write(str(vertices[ii,0])+" "+str(vertices[ii,1])+" "+str(vertices[ii,2])+"\n")
+	fout.close()
 
+def write_ply_point_normal(name, vertices,  colors):
+	fout = open(name, 'w')
+	fout.write("ply\n")
+	fout.write("format ascii 1.0\n")
+	fout.write("element vertex "+str(len(vertices))+"\n")
+	fout.write("property float x\n")
+	fout.write("property float y\n")
+	fout.write("property float z\n")
+	fout.write("property float nx\n")
+	fout.write("property float ny\n")
+	fout.write("property float nz\n")
+	fout.write("property uchar red\n")
+	fout.write("property uchar green\n")
+	fout.write("property uchar blue\n")
+	fout.write("end_header\n")
+	if 1:
+		for ii in range(len(vertices)):
+			fout.write(str(vertices[ii,0])+" "+str(vertices[ii,1])+" "+str(vertices[ii,2])+" "+str(vertices[ii,3])+" "+str(vertices[ii,4])+" "+str(vertices[ii,5])+" "+str(min(255,int(255*colors[ii,0])))+" "+str(min(255,int(255*colors[ii,1])))+" "+str(min(255,int(255*colors[ii,2])))+"\n")
+	else:
+		for ii in range(len(vertices)):
+			fout.write(str(vertices[ii,0])+" "+str(vertices[ii,1])+" "+str(vertices[ii,2])+" "+str(normals[ii,0])+" "+str(normals[ii,1])+" "+str(normals[ii,2])+"\n")
+	fout.close()
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Extract meshes from occupancy process.'
@@ -27,9 +67,12 @@ if __name__ == '__main__':
                         help='Overrites the default upsampling steps in config')
     parser.add_argument('--refinement-step', type=int, default=-1,
                         help='Overrites the default refinement steps in config')
+    parser.add_argument('--model', type=str, default='../stage2/out/a chair/model20.pt',
+                        help='The initialization model path')     
 
-
+    
     args = parser.parse_args()
+    root='/'.join(args.model.split('/')[:-1])
     cfg = config.load_config(args.config, 'configs/default.yaml')
     is_cuda = (torch.cuda.is_available() and not args.no_cuda)
     device = torch.device("cuda" if is_cuda else "cpu")
@@ -61,7 +104,7 @@ if __name__ == '__main__':
     # Model
     model = config.get_model(cfg, device=device, len_dataset=len(dataset))
 
-    checkpoint_io = CheckpointIO(out_dir, model=model)
+    checkpoint_io = CheckpointIO('out/single_view_reconstruction/multi_view_supervision/ours_combined/model.pt', model=model)
     checkpoint_io.load(cfg['test']['model_file'], device=device)
     
     # Generator
@@ -126,36 +169,78 @@ if __name__ == '__main__':
             vis_file_dict[category] = []
 
         if 1:
+            text='out'
+            try:
+              os.mkdir(text)
+            except:
+              pass
             t0 = time.time()
-            out = generator.generate_mesh(data)
+            out = generator.generate_mesh(data, root)
             time_dict['mesh'] = time.time() - t0
-
             # Get statistics
             try:
-                mesh, stats_dict,some_array, grid = out
+                mesh, stats_dict,c,pc1,pc2 = out
             except TypeError:
-                mesh, stats_dict = out, {}
+                mesh, stats_dict,c,pc1,pc2 = out, {}
             time_dict.update(stats_dict)
 
+
+            it=9999999
+            size=100
+            pixels = arange_pixels((size,size), batch_size)[1].to(device)
+            
+            camera_mat=torch.from_numpy(np.load('../../ShapeNet/camera_mat.npy')).cuda().float().unsqueeze(0)
+            scale_mat=torch.from_numpy(np.eye(4)).cuda().float().unsqueeze(0)
+            
+
+            patch=10
+            psize=int(size/patch)
+
+
+
+            rgb_pred=torch.zeros((size,size,3))
+            mask_pred=torch.zeros((size,size,3))
+        
+            for rrr in range(5):
+              for i in range(patch):
+                world_mat=torch.from_numpy(np.load(glob.glob('../../cameras/*.npy')[rrr])).cuda().float().unsqueeze(0)
+                #world_mat[:,:3,3]*=1.5
+                p_world, mask_p, mask_zero_occupied = \
+                    model.pixels_to_world(pixels[:,i*psize*size:(i+1)*psize*size,:], camera_mat,
+                                         world_mat, scale_mat, c, it)
+                rgb_p = model.decode_color(p_world, c=c)
+                
+                #mask_p=mask_pred.int()
+                #print (rgb_pred[:,i*psize:(i+1)*psize,:].shape, rgb_p.shape)
+                rgb_pred[i*psize:(i+1)*psize,:,:]=torch.reshape(rgb_p,(psize,size,3))
+
+                mask_pred[i*psize:(i+1)*psize,:,0]=torch.reshape(mask_p,(psize,size))      
+                mask_pred[i*psize:(i+1)*psize,:,1]=torch.reshape(mask_p,(psize,size))     
+                mask_pred[i*psize:(i+1)*psize,:,2]=torch.reshape(mask_p,(psize,size))  
+                                           
+              #rgb_pred_reshape=torch.reshape(rgb_pred,(-1,size, size,3))
+              #rgb_pred_reshape=torch.reshape(rgb_pred,(-1,size, size,3))
+              rgb_pred=torch.transpose(rgb_pred, 0,1)
+              rgb_pred_np_reshape=rgb_pred.detach().cpu().numpy()
+
+              mask_pred=torch.transpose(mask_pred, 0,1)
+              mask_pred_np_reshape=mask_pred.detach().cpu().numpy()
+              rgb_pred_np_reshape[np.where(mask_pred_np_reshape==0)]=1
+
+
+              
+              cv2.imwrite(text+'/render'+str(rrr)+'.png',rgb_pred_np_reshape[:,:,::-1]*255)
+        
+
+            #np.save('ft1/'+text.split('/')[-1]+'.npy',c.detach().cpu().numpy())
+            #continue
+            write_ply_point_normal(text+"/newpc.ply", pc1, pc2/255.0)
+
             # Write output
-            mesh_out_file = os.path.join(
-                mesh_dir, '%s.%s' % (modelname, mesh_extension))
-            mesh.export(mesh_out_file)
-            #out_file_dict['mesh'] = mesh_out_file
-
+            #mesh_out_file = os.path.join(
+            #    mesh_dir, '%s.%s' % ("new"+modelname, mesh_extension))
+            mesh.export('out/mesh.ply')
             
-            np.save(mesh_out_file+'.npy', grid)
-            #print (mesh_out_file+'.npy')
-            
-            
-            # For DTU save also transformed-back mesh to file
-            if cfg['data']['dataset_name'] == 'DTU':
-                scale_mat = data.get('camera.scale_mat_0')[0]
-                mesh_transformed = transform_mesh(mesh, scale_mat)
-                mesh_out_file = os.path.join(
-                    mesh_dir, '%s_world_scale.%s' % (modelname, mesh_extension))
-                mesh_transformed.export(mesh_out_file)
-
         #except RuntimeError:
         #    print("Error generating mesh %s (%s)." % (modelname, category))
 
@@ -188,6 +273,7 @@ if __name__ == '__main__':
                 out_file = os.path.join(generation_vis_dir, '%02d_input.jpg'
                                         % (c_it))
                 img.save(out_file)
+
 
         model_counter[category] += 1
 
