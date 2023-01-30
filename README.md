@@ -105,5 +105,9 @@ python generate.py configs/demo/demo_combined.yaml --model '../stage2/out/a wood
 
 Coming soon.
 
+## Acknowledgement
+
+The code is built upon [DVR](https://github.com/autonomousvision/differentiable_volumetric_rendering)
+
 ## Contact
 If you have any questions or suggestions about this repo, please feel free to contact me (liuzhengzhelzz@gmail.com).
