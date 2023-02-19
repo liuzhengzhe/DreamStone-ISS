@@ -1,0 +1,255 @@
+from xml.sax.handler import feature_external_ges
+import torch
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.data import Dataset, DataLoader
+import glob, os
+
+from PIL import Image
+
+clip_transform = transforms.Compose([
+            transforms.Resize(size=224, max_size=None, antialias=None),
+            #transforms.CenterCrop(size=(224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+
+dvr_transform = transforms.Compose([
+    #transforms.Resize(img_size),
+    transforms.ToTensor()])
+
+def default_loader(path):
+    #im=torch.from_numpy(cv2.imread(path)).cuda()
+    #img_tensor=torch.tensor(ims.astype('float32')).permute(2,0,1)
+    #image_data = Image.open(path).convert('RGB')
+    #clip_image = clip_transform(image_data)
+    #dvr_image=dvr_transform(image_data)
+    image = preprocess(Image.open(path)).to(device)
+    return image, image
+
+
+class customData(Dataset):
+    def __init__(self, dataset = '', data_transforms=None, loader = default_loader):
+        self.img_name=glob.glob('save_inference_results/shapenet_motorbike/inference/interpolation/*/inter_img.jpg')#[:30]
+        #self.data_transforms = data_transforms
+        self.dataset = dataset
+        self.loader = loader
+
+    def __len__(self):
+        return len(self.img_name)
+
+    def __getitem__(self, item):
+        img_name = self.img_name[item]#+'/inter_img.jpg'
+        clip_image, dvr_image = self.loader(img_name)
+        #print ('im',torch.unique(clip_image))
+        g=np.load(self.img_name[item].replace('inter_img.jpg','geo.npy'))
+        c=np.load(self.img_name[item].replace('inter_img.jpg','tex.npy'))
+        g=np.reshape(g,(22*512))
+        c=np.reshape(c,(9*512))
+
+
+        #print (torch.unique(clip_image), torch.unique(dvr_image))
+        #if self.data_transforms is not None:
+        #clip_image, dvr_image= self.data_transforms[self.dataset](img)
+          
+
+        return clip_image,g,c
+ 
+image_datasets = customData() 
+dataloders =  torch.utils.data.DataLoader(image_datasets,
+                                                 batch_size=16,
+                                                 shuffle=True) 
+                                                 
+                                                 
+
+import numpy as np
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+
+
+
+class generator(nn.Module):
+	def __init__(self,  gf_dim, gf_dim2):
+		super(generator, self).__init__()
+		self.gf_dim = gf_dim
+		self.gf_dim2=gf_dim2
+		self.linear_1 = nn.Linear(512, self.gf_dim*128, bias=True)
+		self.linear_2 = nn.Linear(self.gf_dim*128, self.gf_dim*128, bias=True)
+		self.linear_3 = nn.Linear(self.gf_dim*128, self.gf_dim*128, bias=True)
+
+		self.linear_1g1 = nn.Linear(512, self.gf_dim*128*4, bias=True)
+		self.linear_2g1 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_3g1 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_4g1 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_5g1 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_6g1 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_7g1 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128, bias=True)
+
+		'''self.linear_1g2 = nn.Linear(512, self.gf_dim*128*4, bias=True)
+		self.linear_2g2 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_3g2 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_4g2 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_5g2 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_6g2 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128*4, bias=True)
+		self.linear_7g2 = nn.Linear(self.gf_dim*128*4, self.gf_dim*128, bias=True)'''
+
+
+		self.linear_4 = nn.Linear(self.gf_dim*128, self.gf_dim2*8, bias=True)
+
+
+		self.linear_4x = nn.Linear(self.gf_dim*128, self.gf_dim2*8, bias=True)
+		
+		self.norm1 = nn.LayerNorm(self.gf_dim*128*4,elementwise_affine=False) 
+		self.norm2 = nn.LayerNorm(self.gf_dim*128*4,elementwise_affine=False) 
+		self.norm3 = nn.LayerNorm(self.gf_dim*128*4,elementwise_affine=False) 
+		self.norm4 = nn.LayerNorm(self.gf_dim*128*4,elementwise_affine=False) 
+		self.norm5 = nn.LayerNorm(self.gf_dim*128*4,elementwise_affine=False) 
+		self.norm6 = nn.LayerNorm(self.gf_dim*128*4,elementwise_affine=False) 
+		self.norm7 = nn.LayerNorm(self.gf_dim*128,elementwise_affine=False) 
+		self.norm8 = nn.LayerNorm(self.gf_dim*128,elementwise_affine=False) 
+		self.norm9 = nn.LayerNorm(self.gf_dim*8,elementwise_affine=False) 
+		self.norm10 = nn.LayerNorm(self.gf_dim*8,elementwise_affine=False) 
+
+		'''s=0.01
+		nn.init.normal_(self.linear_1.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_1.bias,0)
+		nn.init.normal_(self.linear_2.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_2.bias,0)
+		nn.init.normal_(self.linear_3.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_3.bias,0)
+		nn.init.normal_(self.linear_4.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_4.bias,0)
+		nn.init.normal_(self.linear_5.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_5.bias,0)
+		nn.init.normal_(self.linear_6.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_6.bias,0)
+
+		nn.init.normal_(self.linear_7.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_7.bias,0)
+		nn.init.normal_(self.linear_8.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_8.bias,0)
+		nn.init.normal_(self.linear_9.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_9.bias,0)
+		nn.init.normal_(self.linear_10.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_10.bias,0)
+		nn.init.normal_(self.linear_11.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_11.bias,0)
+		nn.init.normal_(self.linear_12.weight, mean=0.0, std=s)
+		nn.init.constant_(self.linear_12.bias,0)'''
+
+   
+	def forward(self, clip_feature):
+
+		#print (clip_feature.shape,'clip')
+
+		l1g1 = self.norm1(self.linear_1g1(clip_feature))
+		l1g1 = F.leaky_relu(l1g1, negative_slope=0.02, inplace=True)
+
+		l1g1 = self.norm2(self.linear_2g1(l1g1))
+		l1g1 = F.leaky_relu(l1g1, negative_slope=0.02, inplace=True)
+
+		l1g1 = self.norm3(self.linear_3g1(l1g1))
+		l1g1 = F.leaky_relu(l1g1, negative_slope=0.02, inplace=True)
+
+		l1g1 = self.norm4(self.linear_4g1(l1g1))
+		l1g1 = F.leaky_relu(l1g1, negative_slope=0.02, inplace=True)
+
+		l1g1 = self.norm5(self.linear_5g1(l1g1))
+		l1g1 = F.leaky_relu(l1g1, negative_slope=0.02, inplace=True)
+
+		l1g1 = self.norm6(self.linear_6g1(l1g1))
+		l1g1 = F.leaky_relu(l1g1, negative_slope=0.02, inplace=True)
+
+		l1g1 = self.norm7(self.linear_7g1(l1g1))
+		l2g1 = F.leaky_relu(l1g1, negative_slope=0.02, inplace=True)
+
+
+
+		g = self.linear_4(l2g1)
+
+
+		c = self.linear_4x(l2g1)
+
+		return g,c
+
+
+def init_weights(m):
+    if isinstance(m, nn.Linear):
+        torch.nn.init.xavier_uniform(m.weight)
+        m.bias.data.fill_(0.01)
+
+model = generator(4,64).cuda()
+model.apply(init_weights)
+#model.load_state_dict(torch.load('model_batch_1_2894.pt'), strict=False)
+model.train()
+import torch.optim as optim
+
+#criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-4)
+
+import clip
+clip_model, preprocess = clip.load("ViT-B/32", device='cuda')
+
+#from im2mesh import config
+#cfg = config.load_config('configs/demo/demo_combined.yaml', 'configs/default.yaml')
+#dvr_model=config.get_model(cfg, device='cuda')
+#dvr_model.load_state_dict(torch.load("ours_combined-af2bce07.pt")['model'])
+
+
+#checkpoint_io = CheckpointIO('.', model=model, optimizer=optimizer)
+#load_dict = checkpoint_io.load('ours_combined-af2bce07.pt', device='cuda')
+
+#for param in dvr_model.parameters():
+#  param.requires_grad=False
+
+for param in clip_model.parameters():
+  param.requires_grad=False
+
+#dvr_model.eval()
+clip_model.eval()
+
+clip_criterion=torch.nn.CosineSimilarity()
+
+device='cuda'
+epochs=1000
+
+i=0
+running_loss=0.0
+for epoch in range(0,epochs):
+	for clip_image, g_gt,c_gt in dataloders:
+		#print ('batched',clip_image.shape,g_gt.shape, c_gt.shape)
+		i+=1
+		clip_image, g_gt, c_gt = clip_image.to(device), g_gt.to(device), c_gt.to(device)
+		
+		optimizer.zero_grad()
+		clip_feature=clip_model.encode_image(clip_image).float()
+
+		random_noise = torch.randn(clip_feature.shape).to(device)  # random Gaussian
+		random_noise = random_noise/random_noise.norm(dim=-1, keepdim=True) # Normalize to sphere
+		clip_feature = clip_feature*(1-0.75) + random_noise*0.75
+		clip_feature = clip_feature / clip_feature.norm(dim=-1, keepdim=True)
+		#print ('clip',clip_feature, g_gt)
+
+		g, c=model(clip_feature.detach())
+		#print (g1.shape,g2.shape, c.shape)
+
+		#gt=feat #dvr_model.encoder(dvr_image)
+		#print (torch.unique(g1), torch.unique(g_gt[:,:,:352]) )
+		#print ('g1 ggt', g1.shape, g_gt.shape)
+		gloss = torch.mean(torch.abs(g-g_gt[:,:512]))
+		#g2loss = torch.mean(torch.abs(g-g_gt[:,512*11:])) #torch.sum(1-clip_criterion(pred_feature, gt.detach()))*40 
+		closs = torch.mean(torch.abs(c-c_gt[:,:512]))
+		print ('loss', gloss, closs, epoch)
+		loss=gloss+closs
+		loss.backward()
+		optimizer.step()
+		running_loss += loss.item()
+		#print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss/i :.3f}')
+		if epoch % 2 == 0: 
+			torch.save(model.state_dict(), 'model_bike_'+str(epoch)+'.pt')
+			try:
+				os.remove('model_bike_'+str(epoch-4)+'.pt')
+			except:
+				pass

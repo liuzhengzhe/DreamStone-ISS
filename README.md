@@ -103,6 +103,10 @@ python generate.py configs/demo/demo_combined.yaml --model '../stage2/out/a wood
 
 ##  Working with [GET3D](https://arxiv.org/abs/2209.11163)
 
+See ``get3d_release'' folder.
+
+##  ISS++
+
 Coming soon.
 
 ## Acknowledgement
