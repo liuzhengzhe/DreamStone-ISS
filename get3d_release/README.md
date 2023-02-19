@@ -10,7 +10,7 @@ Please follow [GET3D](https://github.com/nv-tlabs/GET3D) for installation. Downl
 
 (1) Pretrained Model
 
-We provide pretrained models of stage 1 [here](). 
+We provide pretrained models of stage 1 [here](https://drive.google.com/drive/folders/1BCkpkjVxyGN4XwMDGoWxs9VwE19kZ57s?usp=sharing). 
 
 (2) Prepare for rendered images as training data. Take the chair category as an example. 
 
@@ -39,7 +39,7 @@ sh train.sh
 
 All the examples in paper can be generated immediately. 
 
-For some other cases, take 'A green rolling chair' as an example, the shape can be generated after around 100 iterations. Check the rendered image in "result" folder, and stop training when the desired shape appears. The trained mapper of thie example is released [here]().
+For some other cases, take 'A green rolling chair' as an example, the shape can be generated after around 100 iterations. Check the rendered image in "result" folder, and stop training when the desired shape appears. The trained mapper of thie example is released [here](https://drive.google.com/drive/folders/1OhGtFmQqE6-R1SwxoXIGKtCMynDpSwHP).
 
 (2) Inference
 
