@@ -1,1 +1,0 @@
-python train_3d.py --outdir=save_inference_results/shapenet_chair  --gpus=1 --batch=4 --gamma=40 --data_camera_mode shapenet_chair  --dmtet_scale 0.8  --use_shapenet_split 1  --one_3d_generator 1  --fp32 0 --inference_vis 1 --resume_pretrain model/shapenet_chair.pt --inference_save_interpolation 1 #--inference_to_generate_textured_mesh 1 

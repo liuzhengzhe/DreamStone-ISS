@@ -189,7 +189,7 @@ if __name__ == '__main__':
             size=100
             pixels = arange_pixels((size,size), batch_size)[1].to(device)
             
-            camera_mat=torch.from_numpy(np.load('../../ShapeNet/camera_mat.npy')).cuda().float().unsqueeze(0)
+            camera_mat=torch.from_numpy(np.load('../camera_mat.npy')).cuda().float().unsqueeze(0)
             scale_mat=torch.from_numpy(np.eye(4)).cuda().float().unsqueeze(0)
             
 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
             for rrr in range(5):
               for i in range(patch):
                 world_mat=torch.from_numpy(np.load(glob.glob('../../cameras/*.npy')[rrr])).cuda().float().unsqueeze(0)
-                #world_mat[:,:3,3]*=1.5
+                world_mat[:,:3,3]*=1.5
                 p_world, mask_p, mask_zero_occupied = \
                     model.pixels_to_world(pixels[:,i*psize*size:(i+1)*psize*size,:], camera_mat,
                                          world_mat, scale_mat, c, it)
