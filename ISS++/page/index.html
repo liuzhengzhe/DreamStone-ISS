@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="ISS++: Image as Stepping Stone for Text-Guided 3D Shape Generation.">
+  <meta name="keywords" content="Dream3D">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ISS++: Image as Stepping Stone for Text-Guided 3D Shape Generation.</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/icon.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+    </script>
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://hypernerf.github.io">
+            HyperNeRF
+          </a>
+          <a class="navbar-item" href="https://nerfies.github.io">
+            Nerfies
+          </a>
+          <a class="navbar-item" href="https://latentfusion.github.io">
+            LatentFusion
+          </a>
+          <a class="navbar-item" href="https://photoshape.github.io">
+            PhotoShape
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav> -->
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Dream3D: Zero-Shot Text-to-3D Synthesis Using 3D Shape Prior and Text-to-Image Diffusion Models</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              Zhengzhe Liu<sup>1</sup>,
+            </span>
+            <span class="author-block">
+              Peng Dai<sup>2</sup>,
+            </span>
+            <span class="author-block">
+              Ruihui Li<sup>3</sup>,
+            </span>
+            <span class="author-block">
+              Xiaojuan Qi<sup>2</sup>,
+            </span>
+            <span class="author-block">
+              Chi-Wing Fu<sup>1</sup>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>The Chinese University of Hong Kong <sup>2</sup>The University of Hong Kong</span>
+            <span class="author-block"><sup>3</sup>Hunan University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2209.04145"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://bluestyle97.github.io/dream3d/index.html"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code (Coming Soon)</span>
+                  </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="static/images/video.mp4"
+                type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section> -->
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div id="results-carousel" class="carousel results-carousel">
+
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A large cargo ship."</p>
+          <video id="teaser1" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A spaceship in the Star War."</p>
+          <video id="teaser2" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser2.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A luxury cruise ship."</p>
+          <video id="teaser1" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser10.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A lamp imitating sunflower."</p>
+          <video id="teaser4" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser4.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A lamp imitating rocket."</p>
+          <video id="teaser5" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser5.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A wooden park bench overgrown with vines."</p>
+          <video id="teaser6" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser6.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A steel cabinet."</p>
+          <video id="teaser6" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser7.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A plane imitating an eagle."</p>
+          <video id="teaser6" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser8.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A monster truck imitating monster."</p>
+          <video id="teaser6" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser9.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A swordfish rifle."</p>
+          <video id="teaser6" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser11.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"A chair from the future."</p>
+          <video id="teaser6" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser12.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item has-text-centered">
+          <p class="caption global-prompt">"RMS Titanic."</p>
+          <video id="teaser3" autoplay controls muted loop playsinline height="100%">
+            <source src="static/images/teaser3.mp4" type="video/mp4">
+          </video>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Recent CLIP-guided 3D optimization methods, e.g., DreamFields and PureCLIPNeRF achieve great success in zero-shot text-guided 3D synthesis. However, due to the scratch training and random initialization without any prior knowledge, these methods usually fail to generate accurate and faithful 3D structures that conform to the corresponding text. In this paper, we make the first attempt to introduce the explicit 3D shape prior to CLIP-guided 3D optimization methods. Specifically, we first generate a high-quality 3D shape from input texts in the text-to-shape stage as the 3D shape prior. We then utilize it as the initialization of a neural radiance field and then optimize it with the full prompt. For the text-to-shape generation, we present a simple yet effective approach that directly bridges the text and image modalities with a powerful text-to-image diffusion model. To narrow the style domain gap between images synthesized by the text-to-image model and shape renderings used to train the image-to-shape generator, we further propose to jointly optimize a learnable text prompt and fine-tune the text-to-image diffusion model for rendering-style image generation. Our method, namely, Dream3D, is capable of generating imaginative 3D content with better visual quality and shape accuracy than state-of-the-art methods.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- Method. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method</h2>
+        <figure>
+          <img src="static/images/pipeline.svg" width=100%/>
+        </figure>
+        <div class="content has-text-justified">
+          <p>
+            Overview of our text-guided 3D synthesis framework. (a) In the first text-to-shape stage, we leverage a fine-tuned off-the-shelf text-to-image diffusion model $G_I$ to synthesize a rendering-style image $\boldsymbol{I}_r$ from the input text prompt $y$. Then we generate a latent shape embedding $\boldsymbol{e}_S$ from $\boldsymbol{I}_r$ using a diffusion-model-based shape embedding generation network $G_M$. Finally, we feed $\boldsymbol{e}_S$ into a high-quality 3D shape generator $G_S$ to synthesize a 3D shape $S$, which we use as an explicit 3D shape prior. (b) In the second optimization stage, we use the 3D shape prior $S$ to initialize a neural radiance field and further optimize it with the CLIP guidance to synthesize 3D content consistent with the input text prompt $y$.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Method. -->
+
+    <!-- Paper video. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Results</h2>
+
+        <!-- <div class="container is-max-desktop">
+          <div class="hero-body">
+            <video id="teaser" autoplay muted loop playsinline height="100%">
+              <source src="static/images/video.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div> -->
+
+        <div class="container is-max-desktop">
+          <div class="hero-body">
+            <p class="caption global-prompt">"A minecraft car."</p>
+            <table width="100%" align="center">
+              <tr></tr>
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result11.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result12.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result13.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result14.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"A car from the Cars movie."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result21.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result22.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result23.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result24.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"The Iron Throne in Game of Thrones."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result31.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result32.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result33.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result34.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"A cabinet designed by van Gogh."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result41.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result42.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result43.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result44.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"A lamp imitating sunflower."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result51.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result52.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result53.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result54.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"A car is burning."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result61.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result62.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result63.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result64.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"A fishing boat floating on the water."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result71.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result72.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result73.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result74.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"A chair imitating cactus."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result81.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result82.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result83.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result84.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+                <td width=25%></td>
+              </tr>
+            </table>
+            <p class="caption global-prompt">"An aircraft carrier."</p>
+            <table width="100%" align="center">
+              <tr>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result91.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result92.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result93.mp4" type="video/mp4"></video></td>
+                <td><video autoplay controls muted loop playsinline width="100%"><source src="static/images/result94.mp4" type="video/mp4"></video></td>
+              </tr>
+              <tr>
+                <td width=25% class="caption global-prompt">CLIP-Mesh</td>
+                <td width=25% class="caption global-prompt">Dream Fields</td>
+                <td width=25% class="caption global-prompt">PureCLIPNeRF</td>
+                <td width=25% class="caption global-prompt"><b>Ours</b></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!--/ Paper video. -->
+  </div>
+</section>
+
+
+<!-- <section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered"> -->
+
+      <!-- Visual Effects. -->
+      <!-- <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Visual Effects</h2>
+          <p>
+            Using <i>nerfies</i> you can create fun visual effects. This Dolly zoom effect
+            would be impossible without nerfies since it would require going through a wall.
+          </p>
+          <video id="dollyzoom" autoplay controls muted loop playsinline height="100%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/dollyzoom-stacked.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div> -->
+      <!--/ Visual Effects. -->
+
+      <!-- Matting. -->
+      <!-- <div class="column">
+        <h2 class="title is-3">Matting</h2>
+        <div class="columns is-centered">
+          <div class="column content">
+            <p>
+              As a byproduct of our method, we can also solve the matting problem by ignoring
+              samples that fall outside of a bounding box during rendering.
+            </p>
+            <video id="matting-video" controls playsinline height="100%">
+              <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/matting.mp4"
+                      type="video/mp4">
+            </video>
+          </div>
+
+        </div>
+      </div>
+    </div> -->
+    <!--/ Matting. -->
+
+    <!-- Animation. -->
+    <!-- <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Results</h2> -->
+
+        <!-- Interpolating. -->
+        <!-- <div class="content has-text-justified">
+          <p>
+            We can also animate the scene by interpolating the deformation latent codes of two input
+            frames. Use the slider here to linearly interpolate between the left frame and the right
+            frame.
+          </p>
+        </div>
+        <div class="columns is-vcentered interpolation-panel">
+          <div class="column is-3 has-text-centered">
+            <img src="https://homes.cs.washington.edu/~kpar/nerfies/images/interpolate_start.jpg"
+                 class="interpolation-image"
+                 alt="Interpolate start reference image."/>
+            <p>Start Frame</p>
+          </div>
+          <div class="column interpolation-video-column">
+            <div id="interpolation-image-wrapper">
+              Loading...
+            </div>
+            <input class="slider is-fullwidth is-large is-info"
+                   id="interpolation-slider"
+                   step="1" min="0" max="100" value="0" type="range">
+          </div>
+          <div class="column is-3 has-text-centered">
+            <img src="https://homes.cs.washington.edu/~kpar/nerfies/images/interpolate_end.jpg"
+                 class="interpolation-image"
+                 alt="Interpolation end reference image."/>
+            <p class="is-bold">End Frame</p>
+          </div>
+        </div>
+        <br/> -->
+        <!--/ Interpolating. -->
+
+        <!-- Re-rendering. -->
+        <!-- <h3 class="title is-4">Re-rendering the input video</h3>
+        <div class="content has-text-justified">
+          <p>
+            Using <span class="dnerf">Nerfies</span>, you can re-render a video from a novel
+            viewpoint such as a stabilized camera by playing back the training deformations.
+          </p>
+        </div>
+        <div class="content has-text-centered">
+          <video id="replay-video"
+                 controls
+                 muted
+                 preload
+                 playsinline
+                 width="75%">
+            <source src="https://homes.cs.washington.edu/~kpar/nerfies/videos/replay.mp4"
+                    type="video/mp4">
+          </video>
+        </div> -->
+        <!--/ Re-rendering. -->
+
+      <!-- </div>
+    </div> -->
+    <!--/ Animation. -->
+
+
+  <!-- </div>
+</section> -->
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{xu2022dream3d,
+  author    = {Xu, Jiale and Wang, Xintao and Cheng, Weihao and Cao, Yan-Pei and Shan, Ying and Qie, Xiaohu and Gao, Shenghua},
+  title     = {Dream3D: Zero-Shot Text-to-3D Synthesis Using 3D Shape Prior and Text-to-Image Diffusion Models},
+  journal   = {arXiv preprint arXiv:2212.14704},
+  year      = {2022},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            The website code is borrowed from the source code of <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>. We thank the authors for sharing the templates.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

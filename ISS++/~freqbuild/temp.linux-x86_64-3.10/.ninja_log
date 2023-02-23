@@ -1,0 +1,5 @@
+# ninja log v5
+0	16559	1674986156610218517	/mnt/sda/lzz/stable-dreamfusion/freqencoder/build/temp.linux-x86_64-3.10/mnt/sda/lzz/stable-dreamfusion/freqencoder/src/bindings.o	563a7a1ed2326340
+0	47067	1674986187122182947	/mnt/sda/lzz/stable-dreamfusion/freqencoder/build/temp.linux-x86_64-3.10/mnt/sda/lzz/stable-dreamfusion/freqencoder/src/freqencoder.o	7267d1c79e28d055
+0	15585	1675329096375687510	/mnt/sda/lzz/lzz-stable-dreamfusion/freqencoder/build/temp.linux-x86_64-3.10/mnt/sda/lzz/lzz-stable-dreamfusion/freqencoder/src/bindings.o	b72fdf4b0db14eee
+1	45015	1675329125815990111	/mnt/sda/lzz/lzz-stable-dreamfusion/freqencoder/build/temp.linux-x86_64-3.10/mnt/sda/lzz/lzz-stable-dreamfusion/freqencoder/src/freqencoder.o	494eaaae092b02d5

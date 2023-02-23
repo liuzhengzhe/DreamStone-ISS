@@ -1,0 +1,1 @@
+python main.py --source "a red car" --text "a hamberger" --workspace 'a hamberger' -O --test --save_mesh
