@@ -107,11 +107,11 @@ See ``get3d_release'' folder.
 
 ##  ISS++
 
-Coming soon.
+See ``ISS++'' folder.
 
 ## Acknowledgement
 
-The code is built upon [DVR](https://github.com/autonomousvision/differentiable_volumetric_rendering)
+The code is built upon [DVR](https://github.com/autonomousvision/differentiable_volumetric_rendering) and [Stable-Dreamfusion] (https://github.com/ashawkey/stable-dreamfusion)
 
 ## Contact
 If you have any questions or suggestions about this repo, please feel free to contact me (liuzhengzhelzz@gmail.com).
