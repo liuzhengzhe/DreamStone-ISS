@@ -1,7 +1,7 @@
 # ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation
 ## ICLR 2023 spotlight
 
-Code for the paper [ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/abs/2209.04145), ICLR 2023 spotlight.
+Code for the paper [ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/abs/2209.04145) (ICLR 2023 spotlight) and [ISS++: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/pdf/2303.15181).
 
 
 **Authors**: Zhengzhe Liu, Peng Dai, Ruihui Li, Xiaojuan Qi, Chi-Wing Fu
