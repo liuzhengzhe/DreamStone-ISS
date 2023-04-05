@@ -58,7 +58,7 @@ class CheckpointIO(object):
         Args:
             filename (str): name of saved module dictionary
         '''
-        filename='model.pt'
+        #filename='model.pt'
 
         if is_url(filename):
             print ('url',filename)

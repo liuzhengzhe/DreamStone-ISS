@@ -132,9 +132,9 @@ class Generator3D(object):
         kwargs = {}
         
         import clip
-        print (root+'/c.npy')
+        #print ('c.npy')
 
-        c=torch.from_numpy(np.load(root+'/c.npy')).cuda()
+        c=torch.from_numpy(np.load('c.npy')).cuda()
 
         c=self.model.generator(c.float())
 

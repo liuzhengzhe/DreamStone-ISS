@@ -7,7 +7,7 @@ import argparse
 import time
 from im2mesh import config, data
 from im2mesh.checkpoints import CheckpointIO
-import logging
+import logging,shutil
 
 if __name__ == '__main__':
     logger_py = logging.getLogger(__name__)
@@ -89,6 +89,8 @@ if __name__ == '__main__':
     
 
     c=torch.from_numpy(np.load(root+'/c.npy')).cuda()
+    
+    shutil.copy(root+'/c.npy', 'c.npy')
 
 
     

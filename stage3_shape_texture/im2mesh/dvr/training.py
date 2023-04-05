@@ -494,7 +494,7 @@ class Trainer(BaseTrainer):
           #  world_mat=-world_mat
           
           
-          world_mat[:,:3,3]*=(1+random.uniform(0.5,1))
+          world_mat[:,:3,3]*=(1+random.uniform(0.0,0.5))
 
   
           p_world, mask_pred, mask_zero_occupied = \

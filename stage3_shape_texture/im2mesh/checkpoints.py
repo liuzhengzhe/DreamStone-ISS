@@ -77,7 +77,7 @@ class CheckpointIO(object):
         
         #if not os.path.isabs(filename):
         #    filename = os.path.join(self.checkpoint_dir, filename)
-        print ('loading name',filename)
+
         if os.path.exists(filename):
             print('loading name',filename)
             print('=> Loading checkpoint from local file...')
@@ -110,7 +110,9 @@ class CheckpointIO(object):
             #if k in state_dict:
             if k=='model':
                 #try:
+
                 v.load_state_dict(state_dict[k],strict=True)
+                
                 
                 #except:
                 #  pass

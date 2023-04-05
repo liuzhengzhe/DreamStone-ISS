@@ -127,7 +127,7 @@ class Generator3D(object):
         
         import clip
 
-        c=torch.from_numpy(np.load(root+'/c.npy')).cuda()
+        c=torch.from_numpy(np.load('c.npy')).cuda()
 
         c=self.model.generator(c.float())
 

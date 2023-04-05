@@ -51,7 +51,7 @@ training:
   batch_size: 1
   batch_size_val: 4
   print_every: 10
-  checkpoint_every: 500
+  checkpoint_every: 100
   visualize_every: 10000
   validate_every: 20000
   backup_every: 50000

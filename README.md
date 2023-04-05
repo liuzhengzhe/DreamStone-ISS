@@ -66,6 +66,8 @@ Mesh and point cloud are saved in 'out/a red car/'
 
 ##  Stage3: texture stylization
 
+[You can download our results](https://drive.google.com/drive/folders/1ackIt5IbruJa10W4Los8pJPQJ2gWdMqk?usp=sharing)
+
 (1) First generate "a chair" in "stage2". 
 
 (2) Training
@@ -80,7 +82,7 @@ The rendered images are saved in "./tmp" folder.
 (3) Inference
 
 ```
-python generate.py configs/demo/demo_combined.yaml --model '../stage2/out/a chair/model20.pt'
+python generate.py configs/demo/demo_combined.yaml --model 'out/single_view_reconstruction/multi_view_supervision/ours_combined/model.pt'
 ```
 
 ##  Stage3: shape-and-texture stylization
@@ -91,7 +93,7 @@ python generate.py configs/demo/demo_combined.yaml --model '../stage2/out/a chai
 
 ```
 cd ../stage3_shape_texture
-python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'tulip' --model '../stage2/out/a wooden boat/mode20.pt'
+python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'tulip' --model '../stage2/out/a wooden boat/model20.pt'
 ```
 
 The rendered images are saved in "./tmp" folder. 
@@ -99,7 +101,7 @@ The rendered images are saved in "./tmp" folder.
 (3) Inference
 
 ```
-python generate.py configs/demo/demo_combined.yaml --model '../stage2/out/a wooden boat/model20.pt'
+python generate.py configs/demo/demo_combined.yaml --model 'out/single_view_reconstruction/multi_view_supervision/ours_combined/model.pt'
 ```
 
 ##  Working with [GET3D](https://arxiv.org/abs/2209.11163)
