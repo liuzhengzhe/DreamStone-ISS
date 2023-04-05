@@ -1,6 +1,6 @@
 # ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation
 ## ICLR 2023 spotlight
-## [Project Page](https://liuzhengzhe.github.io/ISS.github.io/)
+## ISS++ [Project Page](https://liuzhengzhe.github.io/ISS.github.io/)
 
 Code for the paper [ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/abs/2209.04145) (ICLR 2023 spotlight) and [ISS++: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/pdf/2303.15181).
 
