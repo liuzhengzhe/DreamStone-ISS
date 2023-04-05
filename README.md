@@ -74,7 +74,7 @@ cd ../stage3_texture
 python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'wooden' --model '../stage2/out/a chair/model20.pt'
 ```
 
-The rendered images are saved in "tmp" folder. 
+The rendered images are saved in "./tmp" folder. 
 
 (3) Inference
 
@@ -93,7 +93,7 @@ cd ../stage3_shape_texture
 python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'tulip' --model '../stage2/out/a wooden boat/mode20.pt'
 ```
 
-The rendered images are saved in "tmp" folder. 
+The rendered images are saved in "./tmp" folder. 
 
 (3) Inference
 
