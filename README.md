@@ -87,7 +87,7 @@ python generate.py configs/demo/demo_combined.yaml --model 'out/single_view_reco
 
 ##  Stage3: shape-and-texture stylization
 
-(1) First generate "a wooden boat" in "stage2". We may need more iterations to generate this shape, like "python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'a wooden boat' ----iteration 30"
+(1) First generate "a wooden boat" in "stage2". We may need more iterations to generate this shape, like "python train.py configs/single_view_reconstruction/multi_view_supervision/ours_combined.yaml --text 'a wooden boat' --iteration 30"
 
 (2) Training
 
