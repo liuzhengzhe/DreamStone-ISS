@@ -39,7 +39,7 @@ sh train.sh
 
 All the examples in paper can be generated immediately at the beginning of the training process. 
 
-For some other cases, take 'A green rolling chair' as an example, the shape can be generated after around 100 iterations. Check the rendered image in "result" folder, and stop training when the desired shape appears. The trained mapper of this example is released [here](https://drive.google.com/drive/folders/1OhGtFmQqE6-R1SwxoXIGKtCMynDpSwHP).
+For some other cases, taking 'A green rolling chair' as an example, the desired shape can be generated after around 100 iterations. Check the rendered images in "result" folder, and stop training when the desired shape appears. The trained mapper of this example is released [here](https://drive.google.com/drive/folders/1OhGtFmQqE6-R1SwxoXIGKtCMynDpSwHP).
 
 (2) Inference
 
