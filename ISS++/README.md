@@ -26,6 +26,8 @@ python main.py --source "a red car" --text "a hamburger" --workspace 'a hamburge
 ```
 
 --source: the initialized shape
+--text: the text description of your desired 3D shape
+--workspace: the folder name
 
 Check the "validation" folder. In most cases, the desired shape can be generated in around 30 to 50 epochs. 
 
@@ -33,5 +35,5 @@ Check the "validation" folder. In most cases, the desired shape can be generated
 (3) Inference
 
 ```
-sh test.sh
+python main.py --source "a red car" --text "a hamberger" --workspace 'a hamberger' -O --test --save_mesh
 ```
