@@ -11,12 +11,18 @@ Follow [Stable-Dreamfusion](https://github.com/ashawkey/stable-dreamfusion)
 
 ##  Train
 
-(1) First generate a coarse shape for initialization, e.g., "a red car", in "stage2". 
+(1) First generate a coarse shape for initialization, e.g., "a police car" or "a red car" in "stage2". 
 
 (2) Training
 
+SDS-Guided Refinement: refine the output from two-stage feature-space alignment. 
 ```
-sh train.sh
+python main.py --source "a police car" --text "a police car" --workspace 'a police car' -O
+```
+
+Out-of Vocabulary Categories: generate out-of-vocabulary 3D shapes, like "hamburger". 
+```
+python main.py --source "a red car" --text "a hamburger" --workspace 'a hamburger' -O
 ```
 
 --source: the initialized shape
