@@ -1,6 +1,6 @@
-# ISS++: Image as Stepping Stone for Text-Guided 3D Shape Generation
+# DreamStone: Image as Stepping Stone for Text-Guided 3D Shape Generation
 
-Code for the paper [ISS++: Image as Stepping Stone for Text-Guided 3D Shape Generation]().
+Code for the paper [DreamStone: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://liuzhengzhe.github.io/DreamStone.github.io/).
 
 **Authors**: Zhengzhe Liu, Peng Dai, Ruihui Li, Xiaojuan Qi, Chi-Wing Fu
 
