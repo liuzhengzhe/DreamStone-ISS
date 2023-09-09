@@ -1,8 +1,10 @@
+# DreamStone [Project Page](https://liuzhengzhe.github.io/DreamStone.github.io/)
+## TPAMI (minor revision)
 # ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation
 ## ICLR 2023 spotlight
-## ISS++ [Project Page](https://liuzhengzhe.github.io/ISS.github.io/)
 
-Code for the paper [ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/abs/2209.04145) (ICLR 2023 spotlight) and [ISS++: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/pdf/2303.15181).
+
+Code for the paper [ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/abs/2209.04145) (ICLR 2023 spotlight) and [DreamStone: Image as Stepping Stone for Text-Guided 3D Shape Generation](https://arxiv.org/pdf/2303.15181).
 
 
 **Authors**: Zhengzhe Liu, Peng Dai, Ruihui Li, Xiaojuan Qi, Chi-Wing Fu
@@ -108,9 +110,9 @@ python generate.py configs/demo/demo_combined.yaml --model 'out/single_view_reco
 
 See ``get3d_release'' folder.
 
-##  ISS++
+##  DreamStone
 
-See ``ISS++'' folder.
+See ``DreamStone'' folder.
 
 ## Acknowledgement
 
