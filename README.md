@@ -1,4 +1,4 @@
-# [DreamStone](https://liuzhengzhe.github.io/DreamStone.github.io/) (TPAMI (minor revision))
+# [DreamStone](https://liuzhengzhe.github.io/DreamStone.github.io/) (TPAMI)
 # ISS: Image as Stepping Stone for Text-Guided 3D Shape Generation (ICLR 2023 spotlight)
 
 
